@@ -1,4 +1,20 @@
-# Extraction
+
+
+public class Extarct_bingyin {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		String filepath = "2.27.owl";
+		OntModel base = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+		base.read(filepath);
+		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_MICRO_RULE_INF, base);
+
+		System.out.println("本体模型读取成功");
+
+				
+		String SOURSE = "http://www.semanticweb.org/fan/ontologies/2016/7/untitled-ontology-26";
+		String NS = SOURSE + "#";
+    
 		try {
 			FileOutputStream out = new FileOutputStream("bingyin.ttl");
 			OutputStreamWriter outWriter = new OutputStreamWriter(out, "UTF-8");
@@ -28,3 +44,4 @@
 			  
 			 }catch (Exception e) { e.printStackTrace(); System.out.println("写入" +
 			  "txt.ttl" + "出错！"); }
+}
