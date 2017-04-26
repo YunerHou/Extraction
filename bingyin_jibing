@@ -1,0 +1,50 @@
+try {
+			FileOutputStream out = new FileOutputStream("bingyin_jibing.ttl");
+			OutputStreamWriter outWriter = new OutputStreamWriter(out, "UTF-8");
+			BufferedWriter bw = new BufferedWriter(outWriter);
+			
+			FileInputStream in = new FileInputStream("bingyin.ttl");
+			InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
+			BufferedReader bufReader = new BufferedReader(inReader);
+			
+			String line = null;
+			while((line = bufReader.readLine()) != null){
+				System.out.println(line);
+				OntClass ontClass = model.getOntClass(NS+line);
+				if(ontClass.hasSuperClass()){
+					ExtendedIterator<OntClass> iterator = ontClass .listSuperClasses();
+					while (iterator.hasNext()) {
+						OntClass type = iterator.next();
+						if (type.isRestriction()) {
+							Restriction restriction = type.as(Restriction.class);
+							String restrictionVerb = "";
+							String restrictionObject = "";
+							if (restriction.isSomeValuesFromRestriction()) {
+								SomeValuesFromRestriction asSomeValuesFromRestriction = restriction.asSomeValuesFromRestriction();
+								restrictionVerb = asSomeValuesFromRestriction.getOnProperty().getURI().split("#")[1];
+								restrictionObject = asSomeValuesFromRestriction.getSomeValuesFrom().getURI().split("#")[1];
+							}
+							if (restriction.isAllValuesFromRestriction()) {
+								AllValuesFromRestriction asAllValuesFromRestriction = restriction.asAllValuesFromRestriction();
+								restrictionVerb = asAllValuesFromRestriction.getOnProperty().getURI().split("#")[1];
+								restrictionObject = asAllValuesFromRestriction.getAllValuesFrom().getURI().split("#")[1];
+							}
+							String outline = "<http://dsc.nlp-bigdatalab.org:8086/"+ line+">    "
+									+ "<http://dsc.nlp-bigdatalab.org:8086/"+restrictionVerb+">	   "
+									+ "<http://dsc.nlp-bigdatalab.org:8086/"+restrictionObject+"> .";
+							System.out.println(outline);
+							bw.write(outline);
+							bw.newLine();
+
+						}
+					}
+				}
+				}
+				
+			bufReader.close();
+			inReader.close();
+			in.close();
+			}catch (Exception e) { 
+				e.printStackTrace(); 
+				System.out.println("写入" +"txt.ttl" + "出错！"); 
+			}
